@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Manajemen Stok Salon</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+</head>
+
+<body>
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header class="header">
+
+        <div class="header-content">
+
+            <div>
+                <h1>Manajemen Stok Salon</h1>
+
+                <p>
+                    Sistem pengelolaan persediaan salon
+                </p>
+            </div>
+
+            <div
+                id="connectionStatus"
+                class="connection-status checking"
+            >
+                Menghubungkan...
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <nav class="navbar">
+
+        <button
+            class="nav-button active"
+            data-page="dashboard"
+        >
+            Dashboard
+        </button>
+
+        <button
+            class="nav-button"
+            data-page="stok"
+        >
+            Data Stok
+        </button>
+
+        <button
+            class="nav-button"
+            data-page="masuk"
+        >
+            Barang Masuk
+        </button>
+
+        <button
+            class="nav-button"
+            data-page="keluar"
+        >
+            Barang Keluar
+        </button>
+
+        <button
+            class="nav-button"
+            data-page="transaksi"
+        >
+            Riwayat Transaksi
+        </button>
+
+    </nav>
+
+
+    <main class="container">
+
+
+        <!-- =========================
+             DASHBOARD
+        ========================== -->
+
+        <section
+            id="page-dashboard"
+            class="page active"
+        >
+
+            <div class="page-title">
+
+                <div>
+                    <h2>Dashboard</h2>
+
+                    <p>
+                        Ringkasan kondisi persediaan salon
+                    </p>
+                </div>
+
+                <button
+                    class="refresh-button"
+                    onclick="loadAllData()"
+                >
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+
+            <div class="dashboard-cards">
+
+                <div class="dashboard-card">
+
+                    <span>Total Barang</span>
+
+                    <strong id="totalBarang">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="dashboard-card">
+
+                    <span>Stok Aman</span>
+
+                    <strong id="stokAman">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="dashboard-card">
+
+                    <span>Stok Menipis</span>
+
+                    <strong id="stokMenipis">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="dashboard-card">
+
+                    <span>Stok Kritis</span>
+
+                    <strong id="stokKritis">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="dashboard-card">
+
+                    <span>Stok Habis</span>
+
+                    <strong id="stokHabis">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="dashboard-card">
+
+                    <span>Total Stok</span>
+
+                    <strong id="totalStok">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="content-box">
+
+                <div class="box-title">
+
+                    <h3>
+                        Peringatan Stok
+                    </h3>
+
+                </div>
+
+                <div id="stockWarning">
+
+                    <div class="loading">
+                        Memuat data...
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             DATA STOK
+        ========================== -->
+
+        <section
+            id="page-stok"
+            class="page"
+        >
+
+            <div class="page-title">
+
+                <div>
+                    <h2>Data Stok</h2>
+
+                    <p>
+                        Kondisi persediaan setiap barang
+                    </p>
+                </div>
+
+                <button
+                    class="refresh-button"
+                    onclick="loadStock()"
+                >
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+
+            <div class="content-box">
+
+                <div class="search-box">
+
+                    <input
+                        type="text"
+                        id="stockSearch"
+                        placeholder="Cari nama atau ID barang..."
+                    >
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>ID Barang</th>
+
+                                <th>Kategori</th>
+
+                                <th>Nama Barang</th>
+
+                                <th>Satuan</th>
+
+                                <th>Stok Awal</th>
+
+                                <th>Masuk</th>
+
+                                <th>Keluar</th>
+
+                                <th>Stok Akhir</th>
+
+                                <th>Minimum</th>
+
+                                <th>Status</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="stockTableBody">
+
+                            <tr>
+
+                                <td
+                                    colspan="10"
+                                    class="loading"
+                                >
+                                    Memuat data...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             BARANG MASUK
+        ========================== -->
+
+        <section
+            id="page-masuk"
+            class="page"
+        >
+
+            <div class="page-title">
+
+                <div>
+
+                    <h2>
+                        Barang Masuk
+                    </h2>
+
+                    <p>
+                        Catat penambahan persediaan
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-container">
+
+                <form id="formMasuk">
+
+                    <div class="form-group">
+
+                        <label for="barangMasuk">
+                            Barang
+                        </label>
+
+                        <select
+                            id="barangMasuk"
+                            required
+                        >
+
+                            <option value="">
+                                Pilih barang
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="jumlahMasuk">
+                            Jumlah
+                        </label>
+
+                        <input
+                            type="number"
+                            id="jumlahMasuk"
+                            min="1"
+                            step="1"
+                            placeholder="Masukkan jumlah"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="keteranganMasuk">
+                            Keterangan
+                        </label>
+
+                        <input
+                            type="text"
+                            id="keteranganMasuk"
+                            placeholder="Contoh: Pembelian barang"
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="submit-button"
+                    >
+                        Simpan Barang Masuk
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             BARANG KELUAR
+        ========================== -->
+
+        <section
+            id="page-keluar"
+            class="page"
+        >
+
+            <div class="page-title">
+
+                <div>
+
+                    <h2>
+                        Barang Keluar
+                    </h2>
+
+                    <p>
+                        Catat penggunaan persediaan
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-container">
+
+                <form id="formKeluar">
+
+                    <div class="form-group">
+
+                        <label for="barangKeluar">
+                            Barang
+                        </label>
+
+                        <select
+                            id="barangKeluar"
+                            required
+                        >
+
+                            <option value="">
+                                Pilih barang
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="jumlahKeluar">
+                            Jumlah
+                        </label>
+
+                        <input
+                            type="number"
+                            id="jumlahKeluar"
+                            min="1"
+                            step="1"
+                            placeholder="Masukkan jumlah"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="keteranganKeluar">
+                            Keterangan
+                        </label>
+
+                        <input
+                            type="text"
+                            id="keteranganKeluar"
+                            placeholder="Contoh: Pemakaian treatment"
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="submit-button"
+                    >
+                        Simpan Barang Keluar
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             RIWAYAT TRANSAKSI
+        ========================== -->
+
+        <section
+            id="page-transaksi"
+            class="page"
+        >
+
+            <div class="page-title">
+
+                <div>
+
+                    <h2>
+                        Riwayat Transaksi
+                    </h2>
+
+                    <p>
+                        Catatan transaksi persediaan
+                    </p>
+
+                </div>
+
+                <button
+                    class="refresh-button"
+                    onclick="loadTransactions()"
+                >
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+
+            <div class="content-box">
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>ID Transaksi</th>
+
+                                <th>Tanggal</th>
+
+                                <th>ID Barang</th>
+
+                                <th>Kategori</th>
+
+                                <th>Nama Barang</th>
+
+                                <th>Jenis</th>
+
+                                <th>Jumlah</th>
+
+                                <th>Keterangan</th>
+
+                                <th>User</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="transactionTableBody">
+
+                            <tr>
+
+                                <td
+                                    colspan="9"
+                                    class="loading"
+                                >
+                                    Memuat data...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         NOTIFICATION
+    ========================== -->
+
+    <div
+        id="notification"
+        class="notification"
+    >
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
